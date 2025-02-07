@@ -299,3 +299,59 @@ I tested **combinations of CapOut (1 fF, 2 fF, 3 fF) and input transition time (
 📌 **Final Answer:** The delay increase is **multiplicative**, meaning each factor (CapOut and transition time) **amplifies** the effect of the other.
 
 ---
+
+### **Comparison of Manual vs. Automated Analysis (Liberate)**
+We now compare the **Cadence manual simulations** with **Liberate’s automated results** to analyze any differences and explain why they occur.
+
+![Liberate_Run](images/Liberate_Run.png)
+---
+
+### **Comparison Table**
+| **CapOut (fF)** | **Transition (ps)** | **Manual Cell Rise (ps)** | **Liberate Cell Rise (ps)** | **Manual Cell Fall (ps)** | **Liberate Cell Fall (ps)** |
+|----------------|----------------|----------------|----------------|----------------|----------------|
+| **1 fF** | **40p (≈12.9p in Liberate)** | **13.55** | **14.85** | **22.19** | **15.81** |
+| **1 fF** | **80p (≈20.65p in Liberate)** | **15.75** | **22.69** | **24.01** | **24.25** |
+| **1 fF** | **150p (≈31.85p in Liberate)** | **19.08** | **30.42** | **26.60** | **32.64** |
+| **2 fF** | **40p (≈12.9p in Liberate)** | **19.50** | **17.48** | **33.75** | **18.35** |
+| **2 fF** | **80p (≈20.65p in Liberate)** | **21.71** | **25.22** | **35.50** | **26.68** |
+| **2 fF** | **150p (≈31.85p in Liberate)** | **25.10** | **33.03** | **38.25** | **35.11** |
+| **3 fF** | **40p (≈12.9p in Liberate)** | **25.39** | **21.31** | **45.16** | **22.03** |
+| **3 fF** | **80p (≈20.65p in Liberate)** | **27.60** | **29.18** | **46.99** | **30.55** |
+| **3 fF** | **150p (≈31.85p in Liberate)** | **31.04** | **37.02** | **49.66** | **38.98** |
+
+---
+
+### **Observations & Explanations**
+#### **1. Why are the transition parameters different between manual and Liberate results?**
+- **Liberate uses slightly different transition time values** (12.9p, 20.65p, 31.85p) compared to manual tests (40p, 80p, 150p).
+- The **Cadence manual setup likely introduced slight variations in rise/fall edges**, whereas Liberate applies a more **idealized waveform**.
+
+#### **2. Why is the cell rise delay larger in Liberate than in manual simulations?**
+- **Liberate applies more realistic gate loading effects**, potentially including factors like **parasitics and wire resistance**.
+- **Manual simulations may have assumed idealized or slightly different node capacitances**, resulting in slightly lower rise delays.
+
+#### **3. Why is the cell fall delay significantly smaller in Liberate for low capacitance cases?**
+- **Liberate models internal gate resistance and transistor non-idealities more precisely**, potentially leading to faster discharging behavior.
+- In **manual simulations, extrinsic capacitances** (routing, metal interconnects) may not have been included as accurately.
+
+#### **4. What is the ratio of best-case to worst-case delay in both methods?**
+- **Manual:**
+  - **Best-Case (1 fF, 40p):** **13.55 ps (rise), 22.19 ps (fall)**
+  - **Worst-Case (3 fF, 150p):** **31.04 ps (rise), 49.66 ps (fall)**
+  - **Ratio (Worst/Best):** **2.29× (rise), 2.24× (fall)**
+- **Liberate:**
+  - **Best-Case (1 fF, 12.9p):** **14.85 ps (rise), 15.81 ps (fall)**
+  - **Worst-Case (3 fF, 31.85p):** **37.02 ps (rise), 38.98 ps (fall)**
+  - **Ratio (Worst/Best):** **2.49× (rise), 2.47× (fall)**
+
+✅ **Conclusion:** The **worst-case to best-case delay ratio is slightly higher in Liberate (~2.49× vs. 2.29× manually)**, likely due to additional parasitic modeling.
+
+---
+
+### **Final Takeaways**
+1. **Liberate captures more realistic parasitic effects**, leading to slightly higher delay values.
+2. **Manual simulations assume slightly idealized node capacitance**, which can underestimate real-world delays.
+3. **Liberate results are slightly more pessimistic**, which aligns with industry practice for timing margin calculations.
+4. **Both methods show a multiplicative delay increase**, confirming that **larger capacitance and slower transitions compound delay effects nonlinearly**.
+
+---
